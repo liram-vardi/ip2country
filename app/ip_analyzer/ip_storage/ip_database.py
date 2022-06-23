@@ -5,7 +5,7 @@ from typing import NamedTuple, Optional
 class IPMetadata(NamedTuple):
     ip: str
     country: str
-    city: str
+    city: Optional[str]
 
 
 class IPsDataStorage(ABC):
