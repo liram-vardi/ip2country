@@ -12,7 +12,7 @@ UNKNOWN = "NA"
 class IPCacheStorage(IPsDataStorage):
     def __init__(self, conf):
         self._rd_host = conf.get("host")
-        self._rd_port = int(conf.get("port", "6379"))
+        self._rd_port = int(conf.get("port", "6380"))
         self._rd_pass = conf.get("password")
         self._rd_db = int(conf.get("db", "0"))
 
@@ -31,7 +31,7 @@ class IPCacheStorage(IPsDataStorage):
 
         try:
             self._rd_client = redis.StrictRedis(host=self._rd_host,
-                                                password=self._rd_pass, port=self._rd_pass, db=self._rd_db)
+                                                password=self._rd_pass, port=self._rd_pass, db=self._rd_db, ssl=True)
         except Exception as ex:
             logging.exception("Failed to connect to Redis: [%s]", str(ex))
 

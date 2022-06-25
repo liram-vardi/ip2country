@@ -1,11 +1,15 @@
+import ipaddress
 import logging
 import uuid
+from functools import wraps
 
 import sentry_sdk
 from flask import Flask, abort, request, jsonify
 from flask.json import JSONEncoder
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+from ip_analyzer.ip_storage.factory import create_storage
+from ip_analyzer.rate_limiter.limiter_factory import create_rate_limiter
 from settings import LISTEN_PORT, SENTRY_DSN, ENVIRONMENT
 
 sentry_sdk.init(dsn=SENTRY_DSN, environment=ENVIRONMENT, integrations=[FlaskIntegration()])
@@ -40,6 +44,36 @@ def init_app():
     app.json_encoder = CustomJSONEncoder
 
 
+init_app()
+rate_limiter = create_rate_limiter()
+ip2country_db = create_storage()
+
+
+def rate_limit_middleware():
+    def _rate_limit_middleware(f):
+        @wraps(f)
+        def __rate_limit_middleware(*args, **kwargs):
+            try:
+                req_ip = request.remote_addr
+                if not rate_limiter.can_be_served(req_ip):
+                    return jsonify({
+                        "message": "Rate limit has reached",
+                        "data": None,
+                        "error": "RATE LIMIT"
+                    }), 429
+            except Exception as e:
+                return jsonify({
+                    "message": "Something went wrong",
+                    "data": None,
+                    "error": str(e)
+                }), 500
+            return f(*args, **kwargs)
+
+        return __rate_limit_middleware
+
+    return _rate_limit_middleware
+
+
 @app.errorhandler(400)
 def resource_not_found(e):
     return jsonify(error=str(e)), 400
@@ -64,11 +98,36 @@ def health_check():
 
 
 @app.route('/v1/find-country', methods=['GET'])
+@rate_limit_middleware()
 def get_ip_country():
-    pass
+    requested_ip = request.args.get("ip")
 
+    if not requested_ip:
+        return jsonify({
+            "message": "missing 'ip' query param",
+            "data": None,
+            "error": "BAD REQUEST"
+        }), 400
 
-init_app()
+    try:
+        ipaddress.ip_address(requested_ip)
+    except ValueError as ve:
+        return jsonify({
+            "message": "%s does not appear to be an IPv4 or IPv6 address" % requested_ip,
+            "data": requested_ip,
+            "error": "BAD REQUEST"
+        }), 400
+
+    ip_data = ip2country_db.get_country(requested_ip)
+    if ip_data is None:
+        return jsonify({
+            "message": "%s is unknown" % requested_ip,
+            "data": requested_ip,
+            "error": "NOT FOUNT"
+        }), 404
+
+    return jsonify(ip_data), 200
+
 
 # Only for develop!
 if __name__ == '__main__':

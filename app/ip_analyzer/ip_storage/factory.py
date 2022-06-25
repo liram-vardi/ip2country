@@ -1,34 +1,30 @@
 import json
 import logging
 from json import JSONDecodeError
-from typing import Optional
 
 from ip_analyzer.ip_storage.ip_database import IPsDataStorage
 from ip_analyzer.ip_storage.local_csv.csv_ip_storage import LocalIPStorage
 from ip_analyzer.ip_storage.redis_cache.ips_redis_cache import IPCacheStorage
+from settings import DATABASE_CONF, DATABASE_TYPE, LOCAL_TEST, IP_CACHE
 
 
-class IPStorageFactory:
-    @staticmethod
-    def create_storage(storage_type: str, conf: Optional[str]) -> IPsDataStorage:
-        if not storage_type:
-            logging.warning("Missing DATABASE_TYPE. Creating LOCAL_TEST analyzer")
-            return LocalIPStorage()
+def create_storage() -> IPsDataStorage:
+    parsed_conf = None
+    if DATABASE_CONF:
+        try:
+            parsed_conf = json.loads(DATABASE_CONF)
+        except JSONDecodeError:
+            logging.error("DATABASE_CONF should be in JSON format: [%s]", conf)
+            raise RuntimeError("DATABASE_CONF should be in JSON format")
 
-        parsed_conf = None
-        if conf:
-            try:
-                parsed_conf = json.loads(conf)
-            except JSONDecodeError:
-                logging.error("DATABASE_CONF should be in JSON format: [%s]", conf)
-                raise RuntimeError("DATABASE_CONF should be in JSON format")
+    if DATABASE_TYPE == LOCAL_TEST:
+        model = LocalIPStorage()
+    elif DATABASE_TYPE == IP_CACHE:
+        model = IPCacheStorage(parsed_conf)
+    else:
+        logging.error("UnSupported type: [%s]", DATABASE_TYPE)
+        raise RuntimeError("UnSupported type %s" % DATABASE_TYPE)
+    logging.info("Initting %s", DATABASE_TYPE)
+    model.load()
 
-        storage_type_upper = storage_type.upper()
-
-        if storage_type_upper == "LOCAL_TEST":
-            return LocalIPStorage(parsed_conf)
-        elif storage_type_upper == "IP_CACHE":
-            return IPCacheStorage(parsed_conf)
-
-        logging.error("UnSupported type: [%s]", storage_type)
-        raise RuntimeError("UnSupported type %s" % storage_type)
+    return model
