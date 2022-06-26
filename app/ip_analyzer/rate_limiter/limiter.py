@@ -35,7 +35,7 @@ class IPCacheRateLimiter(RateLimiter):
 
         if new_count == 1:
             # This is the first value on this key --> set expire:
-            self._redis_client.expire(key, self._window_size * 2 * 10)
+            self._redis_client.expire(key, self._window_size * 2)
 
         if new_count > self._limit:
             # Hit the sec rate limit - no need to continue check the rest of the window counters:
