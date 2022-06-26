@@ -44,7 +44,7 @@ class IPCacheRateLimiter(RateLimiter):
             previous_time_point = current_time - time_delta
             pre_key = "%s#%s" % (id, str(previous_time_point))
             pre_count = self._redis_client.get(pre_key)
-            total_windows_count += pre_count if pre_count else 0
+            total_windows_count += int(pre_count) if pre_count else 0
 
         if total_windows_count > self._window_size * self._limit_per_sec:
             # Hit the window sec rate limit:

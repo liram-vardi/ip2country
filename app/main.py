@@ -126,7 +126,10 @@ def get_ip_country():
             "error": "NOT FOUNT"
         }), 404
 
-    return jsonify(ip_data), 200
+    return jsonify({
+        "country": ip_data.country,
+        "city": ip_data.city
+    }), 200
 
 
 # Only for develop!

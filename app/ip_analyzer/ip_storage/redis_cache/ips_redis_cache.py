@@ -15,6 +15,7 @@ class IPCacheStorage(IPsDataStorage):
         self._rd_port = int(conf.get("port", "6380"))
         self._rd_pass = conf.get("password")
         self._rd_db = int(conf.get("db", "0"))
+        self._rd_ssl = not bool(conf.get("disable_ssl"))
 
         self._rd_client = None
 
@@ -31,7 +32,8 @@ class IPCacheStorage(IPsDataStorage):
 
         try:
             self._rd_client = redis.StrictRedis(host=self._rd_host,
-                                                password=self._rd_pass, port=self._rd_pass, db=self._rd_db, ssl=True)
+                                                password=self._rd_pass, port=self._rd_pass, db=self._rd_db,
+                                                ssl=self._rd_ssl)
         except Exception as ex:
             logging.exception("Failed to connect to Redis: [%s]", str(ex))
 
