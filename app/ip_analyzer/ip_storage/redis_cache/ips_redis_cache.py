@@ -5,6 +5,7 @@ from typing import Optional
 import redis
 
 from ip_analyzer.ip_storage.ip_database import IPsDataStorage, IPMetadata
+from utils import create_redis_client
 
 UNKNOWN = "NA"
 
@@ -31,11 +32,11 @@ class IPCacheStorage(IPsDataStorage):
             raise RuntimeError("Missing 'password'. Check configuration")
 
         try:
-            self._rd_client = redis.StrictRedis(host=self._rd_host,
-                                                password=self._rd_pass, port=self._rd_pass, db=self._rd_db,
-                                                ssl=self._rd_ssl)
+            self._rd_client = create_redis_client(self._rd_host, self._rd_pass, self._rd_port, self._rd_db,
+                                                  self._rd_ssl)
         except Exception as ex:
             logging.exception("Failed to connect to Redis: [%s]", str(ex))
+            raise ex
 
     def get_country(self, ip: str) -> Optional[IPMetadata]:
         if not self._rd_client:

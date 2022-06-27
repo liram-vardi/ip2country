@@ -122,9 +122,9 @@ def get_ip_country():
     if ip_data is None:
         return jsonify({
             "message": "%s is unknown" % requested_ip,
-            "data": requested_ip,
-            "error": "NOT FOUNT"
-        }), 404
+            "country": None,
+            "city": None
+        }), 200
 
     return jsonify({
         "country": ip_data.country,
