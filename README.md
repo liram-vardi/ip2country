@@ -4,6 +4,9 @@ This is a simple implementation ip-to-geo service.
 It uses generic IPs storage to give the above mapping.
 This project currently contains 2 simple implementations: local CSV file and Redis cache.
 
+#### Quick start:
+`docker-compose up`
+
 ### API:
 1. GET /v1/find-country?ip=\<IPv4 or IPv6\>
    1. On success: 200, `{"country": "XXX", "city":"xxx"}` 
