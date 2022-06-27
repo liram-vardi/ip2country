@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  ip2country:
+    build: .
+    environment:
+      LIMITER_REDIS_DISABLE_SSL: 1
+      LIMITER_REDIS_HOST: "redis"
+      LIMITER_REDIS_PASS: "pass"
+      LIMITER_REDIS_PORT: "6379"
+      LIMITER_REQ_SEC: "5"
+      LIMITER_WINDOW_SIZE: "2"
+      DATABASE_TYPE: "LOCAL_TEST"
+    ports:
+      - "3001:80"
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --requirepass pass
