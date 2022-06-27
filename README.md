@@ -1,6 +1,8 @@
-# ip2country
+# ip2country simple service
 
 
+#### Tests:
+The basic command-line: `python -m unittest discover`
 
 
 
