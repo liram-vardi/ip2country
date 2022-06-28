@@ -69,7 +69,7 @@ a Web Server Gateway Interface (WSGI).
 This project contains a "ready-to-use" Dockerfile which build this application with uWSGI application server container and Nginx.
 
 Feel free to deploy this WSGI application with any other WSGI server, but do not use the development server in production! 
-
+![nginx-uWSGI-Flask](https://miro.medium.com/max/1400/1*XK2w4moWTE0SczUyLEqbOA.png)
 #### Tests:
 The basic command-line: `python -m unittest discover`
 
