@@ -6,6 +6,7 @@ This project currently contains 2 simple implementations: local CSV file and Red
 
 #### Quick start:
 `docker-compose up`
+The app will be available at `http://localhost:3001`
 
 ### API:
 1. GET /v1/find-country?ip=\<IPv4 or IPv6\>
@@ -65,7 +66,7 @@ LIMITER_WINDOW_SIZE = <Window size in sec> # Default is 3 sec window.
 The service is based on python Flask and should always deploy and run with 
 a Web Server Gateway Interface (WSGI).
 
-This project contains a "read-to-use" Dockerfile which build this application with uWSGI application server container and Nginx.
+This project contains a "ready-to-use" Dockerfile which build this application with uWSGI application server container and Nginx.
 
 Feel free to deploy this WSGI application with any other WSGI server, but do not use the development server in production! 
 
