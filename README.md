@@ -75,7 +75,7 @@ Feel free to deploy this WSGI application with any other WSGI server, but do not
 The basic command-line: `python -m unittest discover`
 
 ### How to run:
-#### Developer service:
+#### Development mode:
 Just run app/main.py with the proper environment variables.
 
 #### Run in Docker (using docker compose):
