@@ -69,7 +69,8 @@ a Web Server Gateway Interface (WSGI).
 This project contains a "ready-to-use" Dockerfile which build this application with uWSGI application server container and Nginx.
 
 Feel free to deploy this WSGI application with any other WSGI server, but do not use the development server in production! 
-![from: A Guide to Scaling Machine Learning Models in Production](https://miro.medium.com/max/1400/1*XK2w4moWTE0SczUyLEqbOA.png)
+[![diagram](https://miro.medium.com/max/1400/1*XK2w4moWTE0SczUyLEqbOA.png)](https://hackernoon.com/a-guide-to-scaling-machine-learning-models-in-production-aa8831163846)
+
 #### Tests:
 The basic command-line: `python -m unittest discover`
 
